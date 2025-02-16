@@ -10,7 +10,10 @@ public class Weapon : MonoBehaviour
     public Camera camera;
     public TMP_Text ammoText;
     public TMP_Text magCountText;
+    public TMP_Text verticalText;
+    public TMP_Text horizontalText;
     public Transform weaponRunPosition;
+    public WeaponData weaponData;
     [Space(3)]
 
     [Header("VFX")]
@@ -67,12 +70,12 @@ public class Weapon : MonoBehaviour
 
     //private variables
     private Vector3 originalPosition;
-    private Vector3 originalMagPosition;
-    private Quaternion originalMagRotation;
+    public Vector3 originalMagPosition;
+    public Quaternion originalMagRotation;
     private Quaternion originalRotation;
-    private Vector3 recoilVelocity = Vector3.zero;
-    private Vector3 recoilOffset;
-    private Vector3 finalPosition;
+    public Vector3 recoilVelocity = Vector3.zero;
+    public Vector3 recoilOffset;
+    public Vector3 finalPosition;
 
     [Header("Booleans")]
     public bool recoiling;
@@ -82,13 +85,16 @@ public class Weapon : MonoBehaviour
     public bool isReturning;
 
     private bool isReloading;
-    private bool recovering;
+    public bool recovering;
     private float recoverLenght;
 
     private GameInput gameInput;
+    private WeaponFireHandle weaponFireHandle;
+    private WeaponReloadHandle weaponReloadHandle;
+    private WeaponAnimationHandler weaponAnimationHandler;
     private void OnEnable()
     {
-        gameInput = new GameInput();
+        gameInput = new GameInput(); //use inputManagers gameInput
         gameInput.Enable();
     }
 
@@ -102,10 +108,14 @@ public class Weapon : MonoBehaviour
         originalMagPosition = magazine.transform.localPosition;
         originalMagRotation = magazine.transform.localRotation;
 
-        verticalRecoil = baseVerticalRecoil;
-        horizontalRecoil = baseHorizontalRecoil;
+        weaponData.verticalRecoil = weaponData.baseVerticalRecoil;
+        weaponData.horizontalRecoil = weaponData.baseHorizontalRecoil;
 
         isAiming = false;
+
+        weaponFireHandle = GetComponent<WeaponFireHandle>();
+        weaponReloadHandle = GetComponent<WeaponReloadHandle>();
+        weaponAnimationHandler = GetComponent<WeaponAnimationHandler>();
 
         ammo = magSize;
         ammoText.text = ammo + " / " + magSize;
@@ -118,15 +128,28 @@ public class Weapon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(nextFire > 0)
+        float inputKey = gameInput.Player.Attack.ReadValue<float>();
+        float fireButton = gameInput.Player.Fire.ReadValue<float>();
+        float reloadButton = gameInput.Player.Reload.ReadValue<float>();
+
+        if (nextFire > 0)
         {
             nextFire -= Time.deltaTime;
         }
 
-        HandleSightIn();
+        if(inputKey >= 0.1f && !isAiming && !isReturning && !inspectScript.isInspecting)
+        {
+            weaponAnimationHandler.HandleSightIn(sightInPosition.localPosition, sightInPosition.localRotation);
+            isAiming = true;
+        }
 
-        float fireButton = gameInput.Player.Fire.ReadValue<float>();
-        float reloadButton = gameInput.Player.Reload.ReadValue<float>();
+        if(inputKey >= 0.1f && isAiming && !isReturning)
+        {
+            weaponAnimationHandler.HandleSightIn(originalPosition, originalRotation);
+            isAiming = false;
+        }
+        //HandleSightIn();
+
 
         //fire button pressed and not out of ammo/mag?
         if (fireButton > 0.1 && nextFire <= 0 && ammo > 0 && !inspectScript.isInspecting)
@@ -137,7 +160,9 @@ public class Weapon : MonoBehaviour
             ammo -= 1;
             ammoText.text = ammo + "/" + magSize;
 
-            Fire();
+            weaponFireHandle.HandleFire();
+
+            //Fire(); old function
         }
         else if(fireButton <= 0)//fire button released
         {
@@ -155,11 +180,13 @@ public class Weapon : MonoBehaviour
         {
             if (isAiming)
             {
-                AimRecoil();
+                weaponAnimationHandler.HandleAimRecoil();
+               // AimRecoil();
             }
             else
             {
-                HipRecoil();
+                weaponAnimationHandler.HandleHipFire();
+                //HipRecoil();
             }
         }
 
@@ -170,8 +197,9 @@ public class Weapon : MonoBehaviour
         }
 
         if(reloadButton > 0.1 && ammo < magSize  && mag >= 0 && !isReloading)
-        {        
-            Reload();
+        {    
+            weaponReloadHandle.HandleReload();
+           // Reload();
             
         }
 
@@ -182,59 +210,24 @@ public class Weapon : MonoBehaviour
         }     
     }
 
-    private void Fire()
+    public void ConsumeAmmo()
     {
-        if (canFire)
-        {
-            //event not fired?
-            if (!eventStackHandler.hasFiredEvent)
-            {
-                eventStackHandler.PushEvent("pushed Firing: " + gameObject.name + " Event");
-                eventStackHandler.hasFiredEvent = true;
-            }
-            recoilOffset = new Vector3(Random.Range(-baseHorizontalRecoil, baseHorizontalRecoil), 0, 0);
-            recoiling = true;
-            recovering = false;
-
-            //instantiate vfx
-            GameObject muzzleFlashInstance = Instantiate(vfxMuzzleFlash, muzzlePosition.position, muzzlePosition.rotation);
-            muzzleFlashInstance.transform.SetParent(muzzlePosition);
-            ParticleSystem ps = muzzleFlashInstance.GetComponent<ParticleSystem>();
-
-            //can play vfx?
-            if (!inspectScript.isInspecting && ammo > 0 && mag >= 0)
-            {
-                ps.Play();
-                Destroy(muzzleFlashInstance, ps.main.duration - 0.8f);
-            }
-            else
-            {
-                Destroy(muzzleFlashInstance);
-            }
-
-            Ray ray = new Ray(muzzlePosition.transform.position, -muzzlePosition.transform.forward);
-
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray.origin, ray.direction, out hit, 100f))
-            {
-                Vector3 impactOffset = new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
-                Vector3 impactPosition = hit.point + impactOffset;
-
-                Instantiate(vfx, impactPosition, Quaternion.identity);
-                Instantiate(vfxBulletHole, impactPosition, Quaternion.identity);
-
-
-                TargetBehaviour target = hit.collider.GetComponent<TargetBehaviour>();
-                if (target || hit.collider)
-                {
-                    target.isHit = true;
-                    TargetManager.Instance.RotateTarget(target);
-                }
-            }
-        }
-        
+        ammo--;
+        UpdateUI();
     }
+
+    public bool CanReload()
+    {
+        return ammo < weaponData.magSize && mag > 0;
+    }
+
+    public void RefillAmmo()
+    {
+        ammo = weaponData.magSize;
+        mag--;
+        UpdateUI();
+    }
+
     private void HandleWalkAnimation()
     {
         if (player == null) return;
@@ -266,8 +259,6 @@ public class Weapon : MonoBehaviour
         if (player.isRunning)
         {
             StartCoroutine(MoveToPosition(targetPosition, targetRotation));
-            //transform.localPosition = Vector3.Lerp(originalPosition, targetPosition, movementBlend);
-            //transform.localRotation = Quaternion.Lerp(originalRotation, targetRotation, movementBlend);
         }
     }
     private void HipRecoil()
@@ -300,8 +291,8 @@ public class Weapon : MonoBehaviour
     {
         foreach (var attachment in equipedAttachment)
         {
-            verticalRecoil += attachment.VerticalRecoilModifier;
-            horizontalRecoil += attachment.HorizontalRecoilModifier;
+            weaponData.verticalRecoil += attachment.VerticalRecoilModifier;
+            weaponData.horizontalRecoil += attachment.HorizontalRecoilModifier;
         }
     }
 
@@ -318,47 +309,14 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    private void Reload()
+    public void UpdateUI()
     {
-        if (mag > 0 && ammo < magSize && !isReloading)
-        {     
-            isReloading = true;
-            canFire = false;
-            recoiling = false;
-
-            mag--;
-            
-            Vector3 targetPos = isAiming ? GetAimedPosition() : originalMagPosition;
-            Quaternion targetRot = isAiming ? GetAimedRotation() : originalMagRotation;
-
-            Rigidbody rb = magazine.GetComponent<Rigidbody>();
-            MeshCollider mc = magazine.GetComponent<MeshCollider>();
-            rb.isKinematic = false;
-            mc.convex = true;
-            
-            magazine.transform.SetParent(null);
-
-            StartCoroutine(MagReloadMagic(rb, mc, targetPos, targetRot));
-        }
+        ammoText.text = $"{ammo} / {weaponData.magSize}";
+        magCountText.text = $"Mag: {mag}";
+        verticalText.text = $"Vertical: {weaponData.verticalRecoil}";
+        horizontalText.text = $"Horizontal: {weaponData.horizontalRecoil}";
     }
-
-    private void HandleSightIn()
-    {
-        float inputKey = gameInput.Player.Attack.ReadValue<float>();
-
-        if (inputKey >= 0.1f && !isAiming && !isReturning && !inspectScript.isInspecting)
-        {
-            StartCoroutine(MoveToSightInPosition(sightInPosition.localPosition, sightInPosition.localRotation));
-            isAiming = true;
-        }
-
-        if (inputKey >= 0.1f && isAiming && !isReturning)
-        {
-            StartCoroutine(MoveToSightInPosition(originalPosition, originalRotation));
-            isAiming = false;
-        }
-    }
-
+    
     public Vector3 GetAimedPosition()
     {
         return sightInPosition.localPosition;
@@ -375,39 +333,9 @@ public class Weapon : MonoBehaviour
     {
         return isAiming ? GetAimedRotation() : originalRotation;
     }
-    private IEnumerator MagReloadMagic(Rigidbody rb, MeshCollider mc, Vector3 targetPos, Quaternion targetRot)
-    {
-        float elapsedTime = 0;
-        float duration = 1f;
 
-        Vector3 startPosition = magazine.transform.position;
-        Quaternion startRotation = magazine.transform.rotation;
 
-        yield return new WaitForSeconds(1f);
-
-        rb.isKinematic = true;
-
-        while (elapsedTime < duration)
-        {
-            float t = elapsedTime / duration;
-            magazine.transform.rotation = Quaternion.Lerp(startRotation, targetRot, t);
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-        magazine.transform.position = targetPos;
-        magazine.transform.rotation = targetRot;
-        magazine.transform.SetParent(transform);
-        magazine.transform.localPosition = originalMagPosition;
-        magazine.transform.localRotation = originalMagRotation;
-       
-        ammo = magSize;
-        canFire = true;
-        isReloading = false;
-        ammoText.text = ammo + "/" + magSize;
-        magCountText.text = "Mag Count: " + mag.ToString();
-    }
-    private IEnumerator MoveToPosition(Vector3 targetPos, Quaternion targetRot)
+    private IEnumerator MoveToPosition(Vector3 targetPos, Quaternion targetRot) // player run animation
     {
         float elapsedTime = 0f;
         Vector3 originalPosition = transform.localPosition;
@@ -425,27 +353,5 @@ public class Weapon : MonoBehaviour
 
         transform.localPosition = targetPos;
         transform.localRotation = targetRot;
-    }
-    private IEnumerator MoveToSightInPosition(Vector3 targetPos, Quaternion targetRot)
-    {
-        isReturning = true;
-
-        float elapsedTime = 0f;
-        Vector3 originalPosition = transform.localPosition;
-        Quaternion originalRotation = transform.localRotation;
-
-        while (elapsedTime < sightInThreshold)
-        {
-            transform.localPosition = Vector3.Lerp(originalPosition, targetPos, elapsedTime);
-            transform.localRotation = Quaternion.Lerp(originalRotation, targetRot, elapsedTime);
-
-            elapsedTime += Time.deltaTime * sightInSpeed;
-
-            yield return null;
-        }
-
-        transform.localPosition = targetPos;
-        transform.localRotation = targetRot;
-        isReturning = false;
     }
 }

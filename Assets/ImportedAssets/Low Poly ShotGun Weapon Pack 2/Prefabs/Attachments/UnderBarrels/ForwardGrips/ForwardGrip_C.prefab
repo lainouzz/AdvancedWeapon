@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7934142239412099186}
   - component: {fileID: 5332063074365238456}
   - component: {fileID: 8237506439132815186}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ForwardGrip_C
   m_TagString: Untagged
   m_Icon: {fileID: 0}

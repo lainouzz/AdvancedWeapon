@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4584144774216143613}
   - component: {fileID: 4475861418595744862}
   - component: {fileID: 2806170009715369795}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_j_Lens_B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 2514819274915839977}
   - component: {fileID: 361019727821736739}
   - component: {fileID: 2244466711242397988}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_J
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199,7 +199,7 @@ GameObject:
   - component: {fileID: 7229843440365884798}
   - component: {fileID: 8334167273088862384}
   - component: {fileID: 2668696720821900362}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_j_Lens_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}

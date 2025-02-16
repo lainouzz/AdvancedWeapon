@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8ab2bf47474003419288a3fb9e85355, type: 3}
+  m_Name: M4_Weapon
+  m_EditorClassIdentifier: 
+  magSize: 30
+  maxAmmo: 0
+  fireRate: 10
+  sightInSpeed: 2
+  sightInThreshold: 1
+  baseVerticalRecoil: 0.01
+  baseHorizontalRecoil: 0.009
+  recoilBack: 0.05
+  recoilLenght: 0
+  recoilVelocity: {x: 0, y: 0.47210953, z: -0.047210917}

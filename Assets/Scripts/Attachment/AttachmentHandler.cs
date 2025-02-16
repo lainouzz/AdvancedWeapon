@@ -76,6 +76,7 @@ public class AttachmentHandler : MonoBehaviour
         Debug.Log($"Next index: {nextIndex}");
 
         EquipAttachment(slotTransform, options[nextIndex], slotName);
+        weapon.UpdateUI();
         equippedAttachments[slotName] = options[nextIndex];
     }
 
