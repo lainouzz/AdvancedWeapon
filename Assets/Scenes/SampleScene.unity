@@ -2100,6 +2100,10 @@ PrefabInstance:
       propertyPath: missilePrefab
       value: 
       objectReference: {fileID: 6877289876135775329, guid: b73157a592a774945ab00bd884546784, type: 3}
+    - target: {fileID: 1303369126803258383, guid: 0a90e5ad01b621d4a93d383dccddee4b, type: 3}
+      propertyPath: currentMissilePrefab
+      value: 
+      objectReference: {fileID: 6877289876135775329, guid: b73157a592a774945ab00bd884546784, type: 3}
     - target: {fileID: 5363428491640104375, guid: 0a90e5ad01b621d4a93d383dccddee4b, type: 3}
       propertyPath: inspect
       value: 
