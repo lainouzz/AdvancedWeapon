@@ -5,7 +5,7 @@ using System.Collections;
 
 public class RPGWeapon : MonoBehaviour
 {
-    public Weapon weapon;
+    public M4_Weapon weapon;
     public EventStackHandler eventStackHandler;
     public GameObject missilePrefab;
     public GameObject currentMissilePrefab;

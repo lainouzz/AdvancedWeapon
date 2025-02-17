@@ -3,7 +3,8 @@ using UnityEngine;
 
 public class CameraShake : MonoBehaviour
 {
-    public Weapon weapon;
+    public M4_Weapon weapon;
+    public RecoilHandle recoilHandle;
     public InspectScript inspectScript;
 
     public float shakeAmount;
@@ -23,7 +24,7 @@ public class CameraShake : MonoBehaviour
 
         if (!inspectScript.isInspecting)
         {
-            if (weapon.recoiling && weapon.ammo > 0)
+            if (recoilHandle.recoiling && weapon.ammo > 0)
             {
                 HandleShake();
             }
@@ -32,7 +33,7 @@ public class CameraShake : MonoBehaviour
                 transform.localPosition = originalPosition;
             }
         }
-        else if (!weapon.recoiling)
+        else if (!recoilHandle.recoiling)
         {
             transform.localPosition = originalPosition;
         }
@@ -40,10 +41,6 @@ public class CameraShake : MonoBehaviour
 
     public void HandleShake()
     {
-        //if (!inspectScript.isInspecting)
-        //{
-            
-        //}
         float randomX = Random.Range(-shakeAmount, shakeAmount);
         float randomY = Random.Range(-shakeAmount, shakeAmount);
         float randomZ = Random.Range(-0.1f, 0.1f);

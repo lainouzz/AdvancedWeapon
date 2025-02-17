@@ -557,6 +557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weapon: {fileID: 33699191205732435}
+  recoilHandle: {fileID: 33699191205732441}
   inspectScript: {fileID: 1524599926}
   shakeAmount: 0.06
 --- !u!1 &380430876
@@ -1192,6 +1193,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1750220993}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &878600708 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8668394286955482727, guid: 064e2155e9235f243a29299161b0089c, type: 3}
+  m_PrefabInstance: {fileID: 1586892182503504293}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1005669896
 GameObject:
   m_ObjectHideFlags: 0
@@ -1666,7 +1672,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5680010585953063541, guid: 064e2155e9235f243a29299161b0089c, type: 3}
   m_PrefabInstance: {fileID: 1586892182503504293}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 878600708}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52b1e0e2137585b44ae13490eda22f82, type: 3}
@@ -2010,12 +2016,59 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 743724573862014276, guid: 064e2155e9235f243a29299161b0089c, type: 3}
   m_PrefabInstance: {fileID: 1586892182503504293}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 878600708}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2dfc30af33434174b916be1a312a9629, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &33699191205732440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878600708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 971969065eeeff3479194e45b1d270d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 33699191205732435}
+  recoilHandle: {fileID: 33699191205732441}
+  stackHandler: {fileID: 11400000, guid: d8a26e55de8098f47a382f8eae380f1f, type: 2}
+  vfxMuzzleFlash: {fileID: 100000, guid: 8eaaa4f553116f44b8459bc24201c514, type: 3}
+  vfx: {fileID: 100002, guid: 00fedc70b62a31e448e8ccc298257b56, type: 3}
+  vfxBulletHole: {fileID: 100002, guid: 957385c45b877e645a128e11a3efb2f9, type: 3}
+  canFire: 0
+--- !u!114 &33699191205732441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878600708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88374854a97bd244b844a6bc6e608980, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapon: {fileID: 33699191205732435}
+  stackHandler: {fileID: 11400000, guid: d8a26e55de8098f47a382f8eae380f1f, type: 2}
+  recoilPercent: 0.3
+  recoverPercent: 0.7
+  baseVerticalRecoil: 0.01
+  recoilBack: 0.05
+  baseHorizontalRecoil: 0.009
+  recoilLenght: 0
+  verticalRecoil: 0
+  horizontalRecoil: 0
+  recoverLenght: 0
+  nextFire: 0
+  fireRate: 10
+  recoiling: 0
+  recovering: 0
+  recoilOffset: {x: 0, y: 0, z: 0}
 --- !u!1001 &322358275176093603
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2179,6 +2232,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 380430878}
     - target: {fileID: 743724573862014276, guid: 064e2155e9235f243a29299161b0089c, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 743724573862014276, guid: 064e2155e9235f243a29299161b0089c, type: 3}
       propertyPath: magCountText
       value: 
       objectReference: {fileID: 51038073}
@@ -2249,7 +2306,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8668394286955482727, guid: 064e2155e9235f243a29299161b0089c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 33699191205732440}
+    - targetCorrespondingSourceObject: {fileID: 8668394286955482727, guid: 064e2155e9235f243a29299161b0089c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 33699191205732441}
   m_SourcePrefab: {fileID: 100100000, guid: 064e2155e9235f243a29299161b0089c, type: 3}
 --- !u!4 &2876381997395556523 stripped
 Transform:

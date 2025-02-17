@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AttachmentHandler : MonoBehaviour
 {
-    public Weapon weapon;
+    public M4_Weapon weapon;
 
     public Transform sightTransform;
     public Transform gripTransform;
@@ -76,6 +76,7 @@ public class AttachmentHandler : MonoBehaviour
         Debug.Log($"Next index: {nextIndex}");
 
         EquipAttachment(slotTransform, options[nextIndex], slotName);
+        weapon.ApplyRecoil();
         equippedAttachments[slotName] = options[nextIndex];
     }
 
