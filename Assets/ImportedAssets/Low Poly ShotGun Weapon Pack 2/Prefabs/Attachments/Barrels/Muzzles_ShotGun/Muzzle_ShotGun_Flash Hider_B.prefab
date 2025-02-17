@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8219354744327861397}
   - component: {fileID: 5025691740726262576}
   - component: {fileID: 7087028963436564474}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Muzzle_ShotGun_Flash Hider_B
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2980707381799595456}
   - component: {fileID: 1061001077683149066}
   - component: {fileID: 8133381593881203364}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Optic_E
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 991039475642943391}
   - component: {fileID: 275845261078837808}
   - component: {fileID: 1309369083798964395}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Optic_E_Lens
   m_TagString: Untagged
   m_Icon: {fileID: 0}
