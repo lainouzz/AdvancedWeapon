@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 431445804964817855}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_Recon_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 973347958608471440}
   - component: {fileID: 8075059556067180683}
   - component: {fileID: 1599300127781204343}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_Recon_A_Back_Part
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,6 +91,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -127,7 +130,7 @@ GameObject:
   - component: {fileID: 5236973461166031277}
   - component: {fileID: 5876899067320512767}
   - component: {fileID: 469569665104843942}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_Recon_A_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -175,6 +178,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -211,7 +217,7 @@ GameObject:
   - component: {fileID: 4000269181019836644}
   - component: {fileID: 211536700600250972}
   - component: {fileID: 7883751568583258849}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_Recon_A_Forward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -258,6 +264,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

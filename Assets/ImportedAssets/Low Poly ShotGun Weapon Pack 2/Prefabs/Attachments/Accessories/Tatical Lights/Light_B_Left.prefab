@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4586174949003445145}
   - component: {fileID: 579423128940858428}
   - component: {fileID: 3453822268734093558}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Light_B_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,6 +59,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -95,7 +98,7 @@ GameObject:
   - component: {fileID: 6843741800885603587}
   - component: {fileID: 5896084409792887276}
   - component: {fileID: 8548087941026476582}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Light_B_Left_Part
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,6 +145,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

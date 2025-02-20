@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3072887962225658128}
   - component: {fileID: 955291006660001242}
   - component: {fileID: 6989422610736959164}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Muzzle_ShotGun_Suppresor_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}

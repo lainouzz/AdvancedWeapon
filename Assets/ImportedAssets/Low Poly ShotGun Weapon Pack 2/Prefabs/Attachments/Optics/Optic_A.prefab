@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4014500165772398777}
   - component: {fileID: 7183336251547420}
   - component: {fileID: 2881585218446404566}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,6 +59,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -95,7 +98,7 @@ GameObject:
   - component: {fileID: 3294807396118091528}
   - component: {fileID: 2367571690497573169}
   - component: {fileID: 1032355268101304883}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_A_Lens
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,6 +145,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

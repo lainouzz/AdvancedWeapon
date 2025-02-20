@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1377557481277657160}
   - component: {fileID: 2644117306245095405}
   - component: {fileID: 240166220251491111}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Light_D_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -58,6 +58,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

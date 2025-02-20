@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3291394359792522216}
   - component: {fileID: 6183141537367999290}
   - component: {fileID: 2145656544348156572}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_G_Sight_Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 5574886787500284166}
   - component: {fileID: 8671171761637168843}
   - component: {fileID: 6722301099746880222}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_G_Sight_Back_Part
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -182,7 +182,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2332228787676176433}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_G
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217,7 +217,7 @@ GameObject:
   - component: {fileID: 8957890141195726981}
   - component: {fileID: 8143497269441880090}
   - component: {fileID: 1368004371819666610}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_G_Sight_Forward
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -304,7 +304,7 @@ GameObject:
   - component: {fileID: 9117312455839219776}
   - component: {fileID: 7052939189213958926}
   - component: {fileID: 3791695634052709543}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Optic_G_Sight_Forward_Part
   m_TagString: Untagged
   m_Icon: {fileID: 0}

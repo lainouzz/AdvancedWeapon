@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7680071716143665222}
   - component: {fileID: 6717896326657056739}
   - component: {fileID: 8853571454287702825}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Muzzle_ShotGun_Shoke_B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
