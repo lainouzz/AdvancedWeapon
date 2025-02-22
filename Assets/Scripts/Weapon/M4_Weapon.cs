@@ -179,7 +179,9 @@ public class M4_Weapon : MonoBehaviour
         {
             HandleWalkAnimation();
             HandleRunAnimation();
-        }     
+        }
+
+        UpdateUI();
     }
 
     private void HandleWalkAnimation()
@@ -264,6 +266,12 @@ public class M4_Weapon : MonoBehaviour
             StartCoroutine(MoveToSightInPosition(originalPosition, originalRotation));
             isAiming = false;
         }
+    }
+
+    public void UpdateUI()
+    {
+        recoilHandle.verticalRecoilText.text = $"Vertical: {recoilHandle.verticalRecoil}"; 
+        recoilHandle.horizontalRecoilText.text = $"Horizontal: {recoilHandle.horizontalRecoil}"; 
     }
 
     public Vector3 GetAimedPosition()

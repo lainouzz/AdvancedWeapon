@@ -1,9 +1,13 @@
 using UnityEngine;
+using TMPro;
 
 public class RecoilHandle : MonoBehaviour
 {
     public M4_Weapon weapon;
     public EventStackHandler stackHandler;
+    public TMP_Text verticalRecoilText;
+    public TMP_Text horizontalRecoilText;
+
 
     [Header("Recoil Settings")]
     [Range(0f, 1f)]
