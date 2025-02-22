@@ -125,15 +125,5 @@ public class AttachmentHandler : MonoBehaviour
         weapon.ApplyRecoil();
 
         equippedAttachments[slotName] = newAttachment;
-
-        //if (equippedAttachments.ContainsKey(slotName))
-        //{
-        //    equippedAttachments[slotName] = newAttachment;
-        //}
-        //else
-        //{
-        //    equippedAttachments.Add(slotName, newAttachment);
-        //}
     }
-
 }
