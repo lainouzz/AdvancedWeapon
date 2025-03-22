@@ -301,12 +301,21 @@ public class M4_Weapon : MonoBehaviour
     }
     public void ApplyRecoil()
     {
-        // Add recoil modifiers from equipped attachments
+        // Reset to base values first
+        recoilHandle.verticalRecoil = recoilHandle.baseVerticalRecoil;
+        recoilHandle.horizontalRecoil = recoilHandle.baseHorizontalRecoil;
+
+        // Then add recoil modifiers from equipped attachments
         foreach (var attachment in equipedAttachment)
         {
             recoilHandle.verticalRecoil += attachment.VerticalRecoilModifier;
             recoilHandle.horizontalRecoil += attachment.HorizontalRecoilModifier;
         }
+
+        if (recoilHandle.verticalRecoilText != null)
+            recoilHandle.verticalRecoilText.text = recoilHandle.verticalRecoil.ToString("F2");
+        if (recoilHandle.horizontalRecoilText != null)
+            recoilHandle.horizontalRecoilText.text = recoilHandle.horizontalRecoil.ToString("F2");
     }
     public void UpdateUI()
     {

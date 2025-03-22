@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Laser A
   m_EditorClassIdentifier: 
   attachmentName: Laser A
-  VerticalRecoilModifier: -1
+  VerticalRecoilModifier: 10
   HorizontalRecoilModifier: 1.2
   adsSpeedModifier: 1.5
   movementSpeedModifier: -1

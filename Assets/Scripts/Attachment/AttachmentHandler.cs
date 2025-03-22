@@ -76,7 +76,7 @@ public class AttachmentHandler : MonoBehaviour
         Debug.Log($"Next index: {nextIndex}");
 
         EquipAttachment(slotTransform, options[nextIndex], slotName);
-        weapon.ApplyRecoil();
+        //weapon.ApplyRecoil();
         equippedAttachments[slotName] = options[nextIndex];
     }
 
