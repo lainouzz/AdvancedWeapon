@@ -2452,6 +2452,10 @@ PrefabInstance:
       propertyPath: weaponRunPosition
       value: 
       objectReference: {fileID: 1359166370}
+    - target: {fileID: 4926483509419946786, guid: 064e2155e9235f243a29299161b0089c, type: 3}
+      propertyPath: swayMultiplier
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5680010585953063541, guid: 064e2155e9235f243a29299161b0089c, type: 3}
       propertyPath: cameraShake
       value: 
