@@ -56,6 +56,8 @@ public class M4_Weapon : MonoBehaviour
     private Quaternion originalMagRotation;
     private Quaternion originalRotation;
 
+    private Rigidbody magazineRigidbody;
+    private MeshCollider magazineMeshCollider;
 
     [Header("Booleans")]
     public bool rayHasHit;
@@ -66,6 +68,8 @@ public class M4_Weapon : MonoBehaviour
     private GameInput gameInput;
     private FireHandle fireHandle;
     private RecoilHandle recoilHandle;
+
+    private Coroutine movementCoroutine;
     #endregion
 
     #region UNITY METHODS
@@ -103,11 +107,12 @@ public class M4_Weapon : MonoBehaviour
         //Get components
         fireHandle = GetComponent<FireHandle>();
         recoilHandle = GetComponent<RecoilHandle>();
+        magazineRigidbody = magazine.GetComponent<Rigidbody>();
+        magazineMeshCollider = magazine.GetComponent<MeshCollider>();
     }
     private void InitializeAmmo()
     {
         ammo = magSize;
-        UpdateAmmoUI();
     }
     private void StoreInitialTransforms()
     {
@@ -163,7 +168,6 @@ public class M4_Weapon : MonoBehaviour
         fireHandle.canFire = true;
         recoilHandle.nextFire = 1f / recoilHandle.fireRate; // Set delay between shots
         ammo--;
-        UpdateAmmoUI();
         fireHandle.Fire();
     }
     private void ResetFireEvents()
@@ -189,8 +193,8 @@ public class M4_Weapon : MonoBehaviour
             Vector3 targetPos = isAiming ? GetAimedPosition() : originalMagPosition;
             Quaternion targetRot = isAiming ? GetAimedRotation() : originalMagRotation;
 
-            Rigidbody rb = magazine.GetComponent<Rigidbody>();
-            MeshCollider mc = magazine.GetComponent<MeshCollider>();
+            Rigidbody rb = magazineRigidbody;
+            MeshCollider mc = magazineMeshCollider;
             rb.isKinematic = false;
             mc.convex = true;
 
@@ -352,8 +356,6 @@ public class M4_Weapon : MonoBehaviour
         ammo = magSize;
         fireHandle.canFire = true;
         isReloading = false;
-        ammoText.text = ammo + "/" + magSize;
-        magCountText.text = "Mag Count: " + mag.ToString();
     }
     private IEnumerator MoveToPosition(Vector3 targetPos, Quaternion targetRot)
     {
@@ -361,19 +363,17 @@ public class M4_Weapon : MonoBehaviour
         Vector3 originalPosition = transform.localPosition;
         Quaternion originalRotation = transform.localRotation;
 
-        // Lerp to target position and rotation smoothly
         while (elapsedTime < 1f)
         {
-            transform.localPosition = Vector3.Lerp(originalPosition, targetPos, elapsedTime);
-            transform.localRotation = Quaternion.Lerp(originalRotation, targetRot, elapsedTime);
-
             elapsedTime += Time.deltaTime * 2f;
-
+            Vector3 newPos = Vector3.Lerp(originalPosition, targetPos, elapsedTime);
+            Quaternion newRot = Quaternion.Lerp(originalRotation, targetRot, elapsedTime);
+            transform.SetLocalPositionAndRotation(newPos, newRot);
             yield return null;
         }
 
-        transform.localPosition = targetPos;
-        transform.localRotation = targetRot;
+        transform.SetLocalPositionAndRotation(targetPos, targetRot);
+        movementCoroutine = null;
     }
     private IEnumerator MoveToSightInPosition(Vector3 targetPos, Quaternion targetRot)
     {
@@ -397,6 +397,14 @@ public class M4_Weapon : MonoBehaviour
         transform.localPosition = targetPos;
         transform.localRotation = targetRot;
         isReturning = false;
+        movementCoroutine = null;
+    }
+    #endregion
+
+    #region DIABLE INPUT
+    private void OnDisable()
+    {
+        gameInput.Disable();
     }
     #endregion
 }
