@@ -73,9 +73,11 @@ public class RecoilHandle : MonoBehaviour
         }
     }
 
+
+
     public void Recovering()
     {
-        Vector3 finalPosition = weapon.GetCurrentOirignalPosition();
+        Vector3 finalPosition = weapon.GetCurrentOriginalPosition();
 
         transform.localPosition = Vector3.SmoothDamp(transform.localPosition, finalPosition, ref recoilVelocity, recoverLenght);
 

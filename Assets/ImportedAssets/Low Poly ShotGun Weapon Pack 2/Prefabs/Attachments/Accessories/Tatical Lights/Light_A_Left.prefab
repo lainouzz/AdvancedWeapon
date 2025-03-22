@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2904676531809724350}
   - component: {fileID: 2297012280633698331}
   - component: {fileID: 4036447056241450193}
+  - component: {fileID: -6602433352529844920}
   m_Layer: 7
   m_Name: Light_A_Left
   m_TagString: Untagged
@@ -87,6 +88,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-6602433352529844920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2523330008829590788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8078217bb8901e745bd59e7f7f3fd319, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attachmentData: {fileID: 11400000, guid: 37a9fa8942f0e174b855b27daad4062c, type: 2}
 --- !u!1 &7284114022053115062
 GameObject:
   m_ObjectHideFlags: 0

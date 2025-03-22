@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
+using System;
 
 public class M4_Weapon : MonoBehaviour
 {
+    #region FIELDS
     [Header("General Component")]
     public Camera camera;
     public TMP_Text ammoText;
@@ -21,7 +23,6 @@ public class M4_Weapon : MonoBehaviour
     [Space(3)]
 
     [Header("Script references")]
-    public WeaponSightIn sightIn;
     public InspectScript inspectScript;
     public EventStackHandler eventStackHandler;
     public Player player;
@@ -30,18 +31,6 @@ public class M4_Weapon : MonoBehaviour
     [Header("Muzzle Transform")]
     public Transform muzzlePosition;
     [Space(3)]
-
-    [Header("Recoil Settings")]
-    [Range(0f, 1f)]
-    public float recoilPercent = 0.3f;
-    [Range(0f, 2f)]
-    public float recoverPercent = 0.7f;
-    public float baseVerticalRecoil = 1f;
-    public float recoilBack = 0f;
-    public float baseHorizontalRecoil = 0.1f;
-    public float recoilLenght;
-    public float verticalRecoil;
-    public float horizontalRecoil;
 
     [Header("Sight in Settings")]
     public Transform sightInPosition;
@@ -52,40 +41,34 @@ public class M4_Weapon : MonoBehaviour
     public List<WeaponAttachmentModifier> equipedAttachment = new List<WeaponAttachmentModifier>();
     [Space]
 
-    [Header("Weapon Fire Settings")]
-    public float nextFire;
-    public float fireRate;
-
     [Header("Weapon Reload Settings")]
-    public int magSize;
-    public int ammo;
-    public int mag;
+    public int magSize;         // Maximum ammo per magazine
+    public int ammo;            // Current ammo in the magazine
+    public int mag;             // Number of magazines remaining
 
     [Header("Weapon animation Settings")]
-    [SerializeField] private float amplitude;
-    [SerializeField] private float movementBlend;
+    [SerializeField] private float amplitude;       // Strength of weapon sway during movement
+    [SerializeField] private float movementBlend;   // Smooths transition between movement states
 
     //private variables
     private Vector3 originalPosition;
     private Vector3 originalMagPosition;
     private Quaternion originalMagRotation;
     private Quaternion originalRotation;
-    private Vector3 recoilVelocity = Vector3.zero;
-    public Vector3 recoilOffset;
-    private Vector3 finalPosition;
+
 
     [Header("Booleans")]
     public bool rayHasHit;
     public bool isAiming;
     public bool isReturning;
-
     public bool isReloading;
-    public bool recovering;
-    public float recoverLenght;
 
     private GameInput gameInput;
     private FireHandle fireHandle;
     private RecoilHandle recoilHandle;
+    #endregion
+
+    #region UNITY METHODS
     private void OnEnable()
     {
         gameInput = new GameInput();
@@ -95,103 +78,147 @@ public class M4_Weapon : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        fireHandle = GetComponent<FireHandle>();
-        recoilHandle = GetComponent<RecoilHandle>();
-
-        //store position/rotation
-        originalPosition = transform.localPosition;
-        originalRotation = transform.localRotation;
-
-        originalMagPosition = magazine.transform.localPosition;
-        originalMagRotation = magazine.transform.localRotation;
+        InitializeComponents();
+        InitializeAmmo();
+        StoreInitialTransforms();
 
         isAiming = false;
-
-        ammo = magSize;
-        ammoText.text = ammo + " / " + magSize;
-        magCountText.text = "Mag Count: " + mag.ToString();
-
-        recoilLenght = 1 / fireRate * recoilPercent;
-        recoverLenght = 1 / fireRate * recoverPercent;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(recoilHandle.nextFire > 0)
-        {
-            recoilHandle.nextFire -= Time.deltaTime;
-        }
-
+        UpdateRecoilTimer();
         HandleSightIn();
+        ProcessInput();
+        HandleRecoilChecks();
+        HandleAnimations();
+        UpdateUI();
+    }
+    #endregion
 
+    #region INITIALIZATION
+    private void InitializeComponents()
+    {
+        //Get components
+        fireHandle = GetComponent<FireHandle>();
+        recoilHandle = GetComponent<RecoilHandle>();
+    }
+    private void InitializeAmmo()
+    {
+        ammo = magSize;
+        UpdateAmmoUI();
+    }
+    private void StoreInitialTransforms()
+    {
+        // Store starting positions and rotations for reset purposes
+        originalPosition = transform.localPosition;
+        originalRotation = transform.localRotation;
+        originalMagPosition = magazine.transform.localPosition;
+        originalMagRotation = magazine.transform.localRotation;
+    }
+    #endregion
+
+    #region INPUT HANDLING
+    private void ProcessInput()
+    {
         float fireButton = gameInput.Player.Fire.ReadValue<float>();
         float reloadButton = gameInput.Player.Reload.ReadValue<float>();
 
-        //fire button pressed and not out of ammo/mag?
-        if (fireButton > 0.1 && recoilHandle.nextFire <= 0 && ammo > 0 && !inspectScript.isInspecting)
+        if (CanFire(fireButton))
         {
-            fireHandle.canFire = true;
-            recoilHandle.nextFire = 1 / recoilHandle.fireRate;
-
-            ammo -= 1;
-            ammoText.text = ammo + "/" + magSize;
-
-            fireHandle.Fire();
+            HandleFire();
         }
-        else if(fireButton <= 0)//fire button released
+        else if (fireButton <= 0)
         {
-            if(eventStackHandler.hasFiredEvent && !eventStackHandler.hasPoppedEvent)
-            { 
-                eventStackHandler.PopEvent();
-                eventStackHandler.hasPoppedEvent = true;
-            }
-            
-            eventStackHandler.ResetEvent();
+            ResetFireEvents();
         }
 
-        // is recoiling and not inspecting?
-        if (recoilHandle.recoiling && !inspectScript.isInspecting && ammo > 0)
+        if (CanReload(reloadButton))
         {
-            if (isAiming)
-            {
-                recoilHandle.AimRecoil();
-            }
-            else
-            {
-                recoilHandle.HipRecoil();
-            }
-        }
-
-        //has recoiled?
-        if (recoilHandle.recovering)
-        {
-            recoilHandle.Recovering();
-        }
-
-        if(reloadButton > 0.1 && ammo < magSize  && mag >= 0 && !isReloading)
-        {        
             Reload();
-            
         }
+    }
+    private bool CanFire(float fireButton)
+    {
+        // Check if firing is allowed based on input, timing, ammo, and inspection state
+        return fireButton > 0.1f &&
+               recoilHandle.nextFire <= 0 &&
+               ammo > 0 &&
+               !inspectScript.isInspecting;
+    }
+    private bool CanReload(float reloadButton)
+    {
+        // Conditions to allow reloading
+        return reloadButton > 0.1f &&
+               ammo < magSize &&
+               mag >= 0 &&
+               !isReloading;
+    }
+    #endregion
 
-        if(!inspectScript.isInspecting && !isReloading && !recoilHandle.recoiling && !isAiming)
+    #region WEAPON MECHANICS
+    private void HandleFire()
+    {
+        fireHandle.canFire = true;
+        recoilHandle.nextFire = 1f / recoilHandle.fireRate; // Set delay between shots
+        ammo--;
+        UpdateAmmoUI();
+        fireHandle.Fire();
+    }
+    private void ResetFireEvents()
+    {
+        // Manage firing event stack for clean state transitions
+        if (eventStackHandler.hasFiredEvent && !eventStackHandler.hasPoppedEvent)
+        {
+            eventStackHandler.PopEvent();
+            eventStackHandler.hasPoppedEvent = true;
+        }
+        eventStackHandler.ResetEvent();
+    }
+    private void Reload()
+    {
+        if (mag > 0 && ammo < magSize && !isReloading)
+        {
+            isReloading = true;
+            fireHandle.canFire = false;
+            recoilHandle.recoiling = false;
+            mag--;
+
+            // Decide target position/rotation based on aiming state
+            Vector3 targetPos = isAiming ? GetAimedPosition() : originalMagPosition;
+            Quaternion targetRot = isAiming ? GetAimedRotation() : originalMagRotation;
+
+            Rigidbody rb = magazine.GetComponent<Rigidbody>();
+            MeshCollider mc = magazine.GetComponent<MeshCollider>();
+            rb.isKinematic = false;
+            mc.convex = true;
+
+            magazine.transform.SetParent(null); // Detach magazine for animation
+
+            StartCoroutine(MagReloadMagic(rb, mc, targetPos, targetRot));
+        }
+    }
+    #endregion
+
+    #region ANIMATIONS
+    private void HandleAnimations()
+    {
+        // Only animate if not inspecting, reloading, recoiling, or aiming
+        if (!inspectScript.isInspecting && !isReloading && !recoilHandle.recoiling && !isAiming)
         {
             HandleWalkAnimation();
             HandleRunAnimation();
         }
-
-        UpdateUI();
     }
-
     private void HandleWalkAnimation()
     {
         if (player == null) return;
 
         float blendTarget = player.isWalking ? 1.0f : 0.0f;
-
         movementBlend = Mathf.Lerp(movementBlend, blendTarget, Time.deltaTime * 4f);
 
+        // Simulate weapon sway based on walk speed
         float t = Time.time * player.walkSpeed;
         float offsetX = Mathf.Sin(t) * amplitude * movementBlend;
         float offsetY = Mathf.Cos(2 * t) * amplitude * 0.5f * movementBlend;
@@ -217,42 +244,12 @@ public class M4_Weapon : MonoBehaviour
             StartCoroutine(MoveToPosition(targetPosition, targetRotation));
         }
     }
+    #endregion
 
-    public void ApplyRecoil()
-    {
-        foreach (var attachment in equipedAttachment)
-        {
-            recoilHandle.verticalRecoil += attachment.VerticalRecoilModifier;
-            recoilHandle.horizontalRecoil += attachment.HorizontalRecoilModifier;
-        }
-    }
-
-    private void Reload()
-    {
-        if (mag > 0 && ammo < magSize && !isReloading)
-        {     
-            isReloading = true;
-            fireHandle.canFire = false;
-            recoilHandle.recoiling = false;
-
-            mag--;
-            
-            Vector3 targetPos = isAiming ? GetAimedPosition() : originalMagPosition;
-            Quaternion targetRot = isAiming ? GetAimedRotation() : originalMagRotation;
-
-            Rigidbody rb = magazine.GetComponent<Rigidbody>();
-            MeshCollider mc = magazine.GetComponent<MeshCollider>();
-            rb.isKinematic = false;
-            mc.convex = true;
-            
-            magazine.transform.SetParent(null);
-
-            StartCoroutine(MagReloadMagic(rb, mc, targetPos, targetRot));
-        }
-    }
-
+    #region AIMING
     private void HandleSightIn()
     {
+        // Toggle aiming state based on input
         float inputKey = gameInput.Player.Attack.ReadValue<float>();
 
         if (inputKey >= 0.1f && !isAiming && !isReturning && !inspectScript.isInspecting)
@@ -260,36 +257,72 @@ public class M4_Weapon : MonoBehaviour
             StartCoroutine(MoveToSightInPosition(sightInPosition.localPosition, sightInPosition.localRotation));
             isAiming = true;
         }
-
-        if (inputKey >= 0.1f && isAiming && !isReturning)
+        else if (inputKey >= 0.1f && isAiming && !isReturning)
         {
             StartCoroutine(MoveToSightInPosition(originalPosition, originalRotation));
             isAiming = false;
         }
     }
+    #endregion
 
+    #region RECOIL UTILITY
+    private void HandleRecoilChecks()
+    {
+        if (recoilHandle.recoiling && !inspectScript.isInspecting && ammo > 0)
+        {
+            // Apply different recoil types based on aiming
+            if (isAiming)
+            {
+                recoilHandle.AimRecoil();
+            }
+            else
+            {
+                recoilHandle.HipRecoil();
+            }
+        }
+
+        //has recoiled?
+        if (recoilHandle.recovering)
+        {
+            recoilHandle.Recovering();
+        }
+    }
+    private void UpdateRecoilTimer()
+    {
+        // Countdown to next allowed shot
+        if (recoilHandle.nextFire > 0)
+        {
+            recoilHandle.nextFire -= Time.deltaTime;
+        }
+    }
+    public void ApplyRecoil()
+    {
+        // Add recoil modifiers from equipped attachments
+        foreach (var attachment in equipedAttachment)
+        {
+            recoilHandle.verticalRecoil += attachment.VerticalRecoilModifier;
+            recoilHandle.horizontalRecoil += attachment.HorizontalRecoilModifier;
+        }
+    }
     public void UpdateUI()
     {
-        recoilHandle.verticalRecoilText.text = $"Vertical: {recoilHandle.verticalRecoil}"; 
-        recoilHandle.horizontalRecoilText.text = $"Horizontal: {recoilHandle.horizontalRecoil}"; 
+        UpdateAmmoUI();
+        recoilHandle.verticalRecoilText.text = $"Vertical: {recoilHandle.verticalRecoil}";
+        recoilHandle.horizontalRecoilText.text = $"Horizontal: {recoilHandle.horizontalRecoil}";
+    }
+    private void UpdateAmmoUI()
+    {
+        ammoText.text = $"{ammo}/{magSize}";
+        magCountText.text = $"Mag Count: {mag}";
     }
 
-    public Vector3 GetAimedPosition()
-    {
-        return sightInPosition.localPosition;
-    }
-    public Quaternion GetAimedRotation()
-    {
-        return sightInRotation.localRotation;
-    }
-    public Vector3 GetCurrentOirignalPosition()
-    {
-        return isAiming ? GetAimedPosition() : originalPosition;
-    }
-    public Quaternion GetCurrentOirignalRotation()
-    {
-        return isAiming ? GetAimedRotation() : originalRotation;
-    }
+    public Vector3 GetAimedPosition() => sightInPosition.localPosition;
+    public Quaternion GetAimedRotation() => sightInRotation.localRotation;
+    public Vector3 GetCurrentOriginalPosition() => isAiming ? GetAimedPosition() : originalPosition;
+    public Quaternion GetCurrentOriginalRotation() => isAiming ? GetAimedRotation() : originalRotation;
+    #endregion
+
+    #region COROUTINES
     private IEnumerator MagReloadMagic(Rigidbody rb, MeshCollider mc, Vector3 targetPos, Quaternion targetRot)
     {
         float elapsedTime = 0;
@@ -298,10 +331,10 @@ public class M4_Weapon : MonoBehaviour
         Vector3 startPosition = magazine.transform.position;
         Quaternion startRotation = magazine.transform.rotation;
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1f);    // Delay before magazine reattaches
 
         rb.isKinematic = true;
-
+        // Smoothly move magazine back to its slot
         while (elapsedTime < duration)
         {
             float t = elapsedTime / duration;
@@ -315,7 +348,7 @@ public class M4_Weapon : MonoBehaviour
         magazine.transform.SetParent(transform);
         magazine.transform.localPosition = originalMagPosition;
         magazine.transform.localRotation = originalMagRotation;
-       
+
         ammo = magSize;
         fireHandle.canFire = true;
         isReloading = false;
@@ -328,6 +361,7 @@ public class M4_Weapon : MonoBehaviour
         Vector3 originalPosition = transform.localPosition;
         Quaternion originalRotation = transform.localRotation;
 
+        // Lerp to target position and rotation smoothly
         while (elapsedTime < 1f)
         {
             transform.localPosition = Vector3.Lerp(originalPosition, targetPos, elapsedTime);
@@ -349,6 +383,7 @@ public class M4_Weapon : MonoBehaviour
         Vector3 originalPosition = transform.localPosition;
         Quaternion originalRotation = transform.localRotation;
 
+        // Move to sight-in position with customizable speed
         while (elapsedTime < sightInThreshold)
         {
             transform.localPosition = Vector3.Lerp(originalPosition, targetPos, elapsedTime);
@@ -363,4 +398,5 @@ public class M4_Weapon : MonoBehaviour
         transform.localRotation = targetRot;
         isReturning = false;
     }
+    #endregion
 }

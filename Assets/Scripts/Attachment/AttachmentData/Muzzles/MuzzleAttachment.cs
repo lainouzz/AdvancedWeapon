@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Grip Attachment", menuName = "Weapon Attachments/Muzzle")]
-public class MuzzleAttachment : ScriptableObject
+public class MuzzleAttachment : WeaponAttachmentModifier
 {
 
 }

@@ -60,7 +60,6 @@ public class FireHandle : MonoBehaviour
                     TargetManager.Instance.RotateTarget(target);
                 }
             }
-            //weapon.ApplyRecoil();
         }
     }
 }
