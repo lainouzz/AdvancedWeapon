@@ -90,7 +90,7 @@ This prototype represents the earlier iteration where I rapidly prototyped ideas
 
 ## **🎥 Media / Showcase**
 
-![M4 Showcase](Media/ezgif-7b66f4203ffe38ce.gif)
+![M4 Showcase](Assets/Media/ezgif-7b66f4203ffe38ce.gif)
 
 ---
 
