@@ -90,7 +90,7 @@ This prototype represents the earlier iteration where I rapidly prototyped ideas
 
 ## **🎥 Media / Showcase**
 
-![M4 Showcase](Assets\Media/ezgif-7b66f4203ffe38ce.gif)
+![M4 Showcase](Media/ezgif-7b66f4203ffe38ce.gif)
 
 ---
 
@@ -101,11 +101,3 @@ This prototype represents the earlier iteration where I rapidly prototyped ideas
 * Inventory/weapon wheel
 * Procedural reload blending
 * Hit reactions and impact feedback system
-
----
-
-If you want, I can also:
-➡️ Rewrite it in a shorter, “studio-ready” format
-➡️ Tailor it specifically for recruiters
-➡️ Add a “Technical Breakdown” section that explains your code architecture choices
-➡️ Create a clean HTML or Notion-style version for portfolio websites
