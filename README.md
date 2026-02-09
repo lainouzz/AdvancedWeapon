@@ -1,7 +1,4 @@
 # AdvancedWeapon
-Here is a **fully polished, portfolio-ready README** with clear structure, professional tone, and strong presentation. It’s tailored to show your strengths as an advanced gameplay programmer.
-
----
 
 # **Weapon Systems Prototype – Unity**
 
@@ -15,7 +12,7 @@ Features include procedural animation, BF2042-style weapon inspection, attachmen
 This project serves as a **portfolio piece** to showcase my ability to design and implement scalable first-person weapon systems.
 It highlights:
 
-* Clean, readable, and customizable gameplay code
+* semi-clean, semi-readable, and customizable gameplay code
 * Procedural recoil and animation
 * Modular weapon data and logic
 * Tools-focused thinking for creating reusable systems
@@ -51,11 +48,6 @@ It highlights:
 * Explosion VFX
 * Procedural animation pass (WIP)
 
-### **Sniper Rifle**
-
-* Not started
-* Planned features: scope overlay, lens distortion, bolt cycling animation
-
 ---
 
 ## **🔧 Planned Refactoring**
@@ -81,7 +73,7 @@ The newer iteration focuses on:
 
 * Cleaner architecture
 * Stronger separation of concerns
-* Improved game feel (animations, timing, polish)
+* Improved game feel (animations, polish, and inertia)
 * A more deliberate and professional implementation process
 
 This prototype represents the earlier iteration where I rapidly prototyped ideas, systems, and animation workflows.
@@ -90,7 +82,7 @@ This prototype represents the earlier iteration where I rapidly prototyped ideas
 
 ## **🎥 Media / Showcase**
 
-
+![M4 Showcase](Assets/Media/ezgif-7b66f4203ffe38ce.gif)
 
 ---
 
@@ -101,11 +93,3 @@ This prototype represents the earlier iteration where I rapidly prototyped ideas
 * Inventory/weapon wheel
 * Procedural reload blending
 * Hit reactions and impact feedback system
-
----
-
-If you want, I can also:
-➡️ Rewrite it in a shorter, “studio-ready” format
-➡️ Tailor it specifically for recruiters
-➡️ Add a “Technical Breakdown” section that explains your code architecture choices
-➡️ Create a clean HTML or Notion-style version for portfolio websites
