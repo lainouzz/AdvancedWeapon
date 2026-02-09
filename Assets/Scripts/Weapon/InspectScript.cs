@@ -61,7 +61,7 @@ public class InspectScript : MonoBehaviour
         {
             StartCoroutine(MoveToPosition(originalPosition, originalRotation));
             isInspecting = false;
-            attachmentHandler.SaveAttachment();
+            attachmentHandler.SaveAttachments();
             eventStackHandler.PopEvent();
             Cursor.lockState = CursorLockMode.Locked;
             

@@ -1,83 +1,71 @@
-using NUnit.Framework;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AttachmentHandler : MonoBehaviour
 {
+    [Header("References")]
     public M4_Weapon weapon;
 
+    [Header("Slot Transforms")]
     public Transform sightTransform;
     public Transform gripTransform;
     public Transform muzzleTransform;
     public Transform sideTransform;
 
+    [Header("Available Attachments")]
     public List<GameObject> availableSights;
     public List<GameObject> availableGrips;
     public List<GameObject> availableMuzzles;
     public List<GameObject> availableSides;
 
     private Dictionary<string, List<GameObject>> attachmentOptions;
-    private Dictionary<string, WeaponAttachmentModifier> equippedAttachmentData = new Dictionary<string, WeaponAttachmentModifier>();
-    private Dictionary<string, GameObject> equippedAttachments = new Dictionary<string, GameObject>();
-    private Dictionary<string, GameObject> savedAttachments = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> equippedPrefabs = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> savedPrefabs = new Dictionary<string, GameObject>();
 
+    private static readonly string[] SlotNames = { "Sight", "Grip", "Muzzle", "Side" };
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        attachmentOptions = new Dictionary<string, List<GameObject>>()
+        attachmentOptions = new Dictionary<string, List<GameObject>>
         {
-            {"Sight", availableSights },
-            {"Grip", availableGrips },
-            {"Muzzle", availableMuzzles },
-            {"Side", availableSides }
+            { "Sight", availableSights },
+            { "Grip", availableGrips },
+            { "Muzzle", availableMuzzles },
+            { "Side", availableSides }
         };
     }
 
-    public void SaveAttachment()
+    public void SaveAttachments()
     {
-        savedAttachments["Sight"] = sightTransform.childCount > 0 ? sightTransform.GetChild(0).gameObject : null;
-        savedAttachments["Grip"] = gripTransform.childCount > 0 ? gripTransform.GetChild(0).gameObject : null;
-        savedAttachments["Muzzle"] = muzzleTransform.childCount > 0 ? muzzleTransform.GetChild(0).gameObject : null;
-        savedAttachments["Side"] = sideTransform.childCount > 0 ? sideTransform.GetChild(0).gameObject : null;
+        foreach (string slot in SlotNames)
+        {
+            equippedPrefabs.TryGetValue(slot, out GameObject prefab);
+            savedPrefabs[slot] = prefab;
+        }
     }
 
-    public void LoadAttachment()
+    public void LoadAttachments()
     {
-        EquipAttachment(sightTransform, savedAttachments.ContainsKey("Sight") ? savedAttachments["Sight"] : null, "Sight");
-        EquipAttachment(gripTransform, savedAttachments.ContainsKey("Grip") ? savedAttachments["Grip"] : null, "Grip");
-        EquipAttachment(muzzleTransform, savedAttachments.ContainsKey("Muzzle") ? savedAttachments["Muzzle"] : null, "Muzzle");
-        EquipAttachment(sideTransform, savedAttachments.ContainsKey("Side") ? savedAttachments["Side"] : null, "Side");
+        foreach (string slot in SlotNames)
+        {
+            savedPrefabs.TryGetValue(slot, out GameObject prefab);
+            EquipAttachment(GetSlotTransform(slot), prefab, slot);
+        }
     }
 
     public void CycleAttachment(string slotName)
     {
         Transform slotTransform = GetSlotTransform(slotName);
+        if (slotTransform == null) return;
 
-        if (slotTransform == null || !attachmentOptions.ContainsKey(slotName)) return;
+        if (!attachmentOptions.TryGetValue(slotName, out List<GameObject> options) || options.Count == 0)
+            return;
 
-        List<GameObject> options = attachmentOptions[slotName];
-        if (options.Count == 0) return;
-
-        GameObject currentAttachment = equippedAttachments.ContainsKey(slotName) ? equippedAttachments[slotName] : null;
-
-        int currentIndex = -1;
-        if (currentAttachment != null)
-        {
-            currentIndex = options.IndexOf(currentAttachment);
-        }
-
+        equippedPrefabs.TryGetValue(slotName, out GameObject currentPrefab);
+        int currentIndex = currentPrefab != null ? options.IndexOf(currentPrefab) : -1;
         int nextIndex = (currentIndex + 1) % options.Count;
 
-        // Debugging output
-        Debug.Log($"Current attachment in {slotName}: {currentAttachment}, Index: {currentIndex}");
-        Debug.Log($"Next attachment to equip: {options[nextIndex].name}");
-        Debug.Log($"Next index: {nextIndex}");
-
         EquipAttachment(slotTransform, options[nextIndex], slotName);
-        //weapon.ApplyRecoil();
-        equippedAttachments[slotName] = options[nextIndex];
     }
 
     private Transform GetSlotTransform(string slotName)
@@ -85,8 +73,8 @@ public class AttachmentHandler : MonoBehaviour
         return slotName switch
         {
             "Sight" => sightTransform,
-            "Muzzle" => muzzleTransform,
             "Grip" => gripTransform,
+            "Muzzle" => muzzleTransform,
             "Side" => sideTransform,
             _ => null,
         };
@@ -94,36 +82,37 @@ public class AttachmentHandler : MonoBehaviour
 
     private void EquipAttachment(Transform slot, GameObject attachmentPrefab, string slotName)
     {
-        if(slot.childCount > 0)
+        if (slot.childCount > 0)
         {
             Destroy(slot.GetChild(0).gameObject);
         }
 
-        if (attachmentPrefab == null) return;
+        equippedPrefabs[slotName] = attachmentPrefab;
 
-        GameObject newAttachment = Instantiate(attachmentPrefab, slot.position, slot.rotation, slot);
-
-        newAttachment.transform.localPosition = Vector3.zero;
-        newAttachment.transform.localScale = new Vector3(10, 10, 10);
-        newAttachment.transform.localRotation = Quaternion.Euler(0, 180,0);
-
-        AttachmentComponent attachmentDataComponent = newAttachment.GetComponent<AttachmentComponent>();
-
-        if (attachmentDataComponent == null)
+        if (attachmentPrefab == null)
         {
-            Debug.LogError($"Attachment {attachmentPrefab.name} does NOT have an AttachmentComponent!");
+            weapon.ApplyRecoil();
             return;
         }
 
-        if (attachmentDataComponent.attachmentData == null)
+        GameObject instance = Instantiate(attachmentPrefab, slot);
+        instance.transform.localPosition = Vector3.zero;
+        instance.transform.localScale = Vector3.one * 10f;
+        instance.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+
+        AttachmentComponent attachmentData = instance.GetComponent<AttachmentComponent>();
+        if (attachmentData == null)
         {
-            Debug.LogError($"AttachmentComponent on {attachmentPrefab.name} is missing an AttachmentData reference!");
+            Debug.LogError($"Attachment {attachmentPrefab.name} is missing an AttachmentComponent!");
             return;
         }
 
-        equippedAttachmentData[slotName] = attachmentDataComponent.attachmentData;
+        if (attachmentData.attachmentData == null)
+        {
+            Debug.LogError($"AttachmentComponent on {attachmentPrefab.name} has no AttachmentData assigned!");
+            return;
+        }
+
         weapon.ApplyRecoil();
-
-        equippedAttachments[slotName] = newAttachment;
     }
 }
