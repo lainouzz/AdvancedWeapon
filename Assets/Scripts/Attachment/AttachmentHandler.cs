@@ -20,6 +20,7 @@ public class AttachmentHandler : MonoBehaviour
 
     private Dictionary<string, List<GameObject>> attachmentOptions;
     private Dictionary<string, GameObject> equippedPrefabs = new Dictionary<string, GameObject>();
+    private Dictionary<string, WeaponAttachmentModifier> equippedModifiers = new Dictionary<string, WeaponAttachmentModifier>();
     private Dictionary<string, GameObject> savedPrefabs = new Dictionary<string, GameObject>();
 
     private static readonly string[] SlotNames = { "Sight", "Grip", "Muzzle", "Side" };
@@ -88,10 +89,11 @@ public class AttachmentHandler : MonoBehaviour
         }
 
         equippedPrefabs[slotName] = attachmentPrefab;
+        equippedModifiers.Remove(slotName);
 
         if (attachmentPrefab == null)
         {
-            weapon.ApplyRecoil();
+            SyncModifiersToWeapon();
             return;
         }
 
@@ -113,6 +115,17 @@ public class AttachmentHandler : MonoBehaviour
             return;
         }
 
+        equippedModifiers[slotName] = attachmentData.attachmentData;
+        SyncModifiersToWeapon();
+    }
+
+    private void SyncModifiersToWeapon()
+    {
+        weapon.equippedAttachments.Clear();
+        foreach (var modifier in equippedModifiers.Values)
+        {
+            weapon.equippedAttachments.Add(modifier);
+        }
         weapon.ApplyRecoil();
     }
 }
