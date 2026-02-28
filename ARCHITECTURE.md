@@ -235,19 +235,19 @@ classDiagram
 ```
 Player Input
     |
-    |--> Player ??? movement state ??? M4_Weapon (walk/run animation)
+    |--> Player -> movement state -> M4_Weapon (walk/run animation)
     |
     |--> M4_Weapon
-    |       ??? Fire ??? FireHandle ??? RecoilHandle (recoil)
-    |       ?                ???? CameraShake (screen shake)
-    |       ??? Aim  ??? sight-in coroutine
-    |       ??? Reload ??? magazine detach/reattach coroutine
+    |       -> Fire -> FireHandle -> RecoilHandle (recoil)
+    |       |                |-> CameraShake (screen shake)
+    |       -> Aim  -> sight-in coroutine
+    |       -> Reload -> magazine detach/reattach coroutine
     |
     |--> InspectScript
-    |       ??? Enter ??? disable CameraShake, push event, unlock cursor
-    |       ??? Exit  ??? AttachmentHandler.SaveAttachments(), pop event
+    |       -> Enter -> disable CameraShake, push event, unlock cursor
+    |       -> Exit  -> AttachmentHandler.SaveAttachments(), pop event
     |
     |--> AttachmentSlot.OnMouseDown()
-            ???? AttachmentHandler.CycleAttachment()
-                    ???? SyncModifiersToWeapon() ??? M4_Weapon.ApplyRecoil()
+            -> AttachmentHandler.CycleAttachment()
+                    -> SyncModifiersToWeapon() -> M4_Weapon.ApplyRecoil()
 ```
