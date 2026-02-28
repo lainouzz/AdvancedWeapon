@@ -1,4 +1,4 @@
-# AdvancedWeapon — Unity FPS Weapon System
+# AdvancedWeapon â€” Unity FPS Weapon System
 
 A modular weapon system built in Unity featuring weapon firing, recoil, attachment customization, inspection, camera shake, and an event-driven architecture.
 
@@ -220,7 +220,7 @@ classDiagram
 | Module | Classes | Responsibility |
 |---|---|---|
 | **Player** | `Player` | Input handling, camera look, movement state |
-| **Weapon Core** | `M4_Weapon` | Central weapon controller — firing, aiming, reload, animation, UI |
+| **Weapon Core** | `M4_Weapon` | Central weapon controller â€” firing, aiming, reload, animation, UI |
 | **Weapon Handlers** | `FireHandle`, `RecoilHandle` | Firing logic / VFX spawning, recoil movement & recovery |
 | **Weapon Effects** | `WeaponSwayHandler`, `CameraShake` | Mouse-driven weapon sway, screen shake on fire |
 | **Weapon Switching** | `WeaponSwitch` | Toggle active weapon via input |
@@ -234,20 +234,20 @@ classDiagram
 
 ```
 Player Input
-    ?
-    ???? Player ??? movement state ??? M4_Weapon (walk/run animation)
-    ?
-    ???? M4_Weapon
-    ?       ??? Fire ??? FireHandle ??? RecoilHandle (recoil)
-    ?       ?                ???? CameraShake (screen shake)
-    ?       ??? Aim  ??? sight-in coroutine
-    ?       ??? Reload ??? magazine detach/reattach coroutine
-    ?
-    ???? InspectScript
-    ?       ??? Enter ??? disable CameraShake, push event, unlock cursor
-    ?       ??? Exit  ??? AttachmentHandler.SaveAttachments(), pop event
-    ?
-    ???? AttachmentSlot.OnMouseDown()
+    |
+    |--> Player ??? movement state ??? M4_Weapon (walk/run animation)
+    |
+    |--> M4_Weapon
+    |       ??? Fire ??? FireHandle ??? RecoilHandle (recoil)
+    |       ?                ???? CameraShake (screen shake)
+    |       ??? Aim  ??? sight-in coroutine
+    |       ??? Reload ??? magazine detach/reattach coroutine
+    |
+    |--> InspectScript
+    |       ??? Enter ??? disable CameraShake, push event, unlock cursor
+    |       ??? Exit  ??? AttachmentHandler.SaveAttachments(), pop event
+    |
+    |--> AttachmentSlot.OnMouseDown()
             ???? AttachmentHandler.CycleAttachment()
                     ???? SyncModifiersToWeapon() ??? M4_Weapon.ApplyRecoil()
 ```
